@@ -1,117 +1,150 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- KEAMANAN: Ngelarang XSS dan Clickjacking -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-
-  <title>Portofolio - Diki Dwi Nugroho | Junior Web Developer</title>
-  ...
-  
-  <!-- Link ke CSS -->
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- Font Google -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bakso Pakde Gimin - Bakso Enak, Kuah Gurih</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="desain.css">
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="logo">Welcome Guys</div>
-    <nav>
-      <ul>
-        <li><a href="#home">Beranda</a></li>
-        <li><a href="#about">Tentang</a></li>
-        <li><a href="#portfolio">Portofolio</a></li>
-        <li><a href="#contact">Kontak</a></li>
-      </ul>
+<!-- HEADER -->
+<header>
+  <div class="container nav">
+    <div class="logo">
+      <img src="ayam.jpg" alt="logo">
+      <div>
+        <h2>Bakso Pakde Gimin</h2>
+        <span>Bakso Enak, Setiap Saat</span>
+      </div>
+    </div>
+    <nav id="navMenu">
+      <a href="#beranda" class="active">Beranda</a>
+      <a href="#menu">Menu</a>
+      <a href="#ulasan">Ulasan</a>
+      <a href="#kontak">Kontak</a>
     </nav>
-  </header>
+    <a href="https://wa.me/6281585059946" target="_blank" class="btn btn-red">Pesan Sekarang</a>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </div>
+</header>
 
-  <!-- SECTION 1: BERANDA / HERO -->
-  <section id="home" class="hero">
-    <!-- Animasi Ombak -->
-    <div class="wave">
-      <svg viewBox="0 0 1440 120"><path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V0H1380C1320 0 1200 0 1080 0C960 0 840 0 720 0C600 0 480 0 360 0C240 0 120 0 60 0H0Z"></path></svg>
-    </div>
-    <div class="hero-content">
-      <h1>Halo, Saya Diki Dwi Nugroho</h1>
-      <p>Junior Web Developer | Pembuat Website Bertema Bersih & Modern</p>
-      <a href="#portfolio" class="btn">Lihat Karya Saya</a>
-    </div>
-  </section>
-
-  <!-- SECTION 2: TENTANG SAYA -->
-  <section id="about" class="about">
-    <h2>Tentang Saya</h2>
-    <div class="about-container">
-      <div class="about-img">
-        <!-- GANTI DENGAN FOTO KAMU. Kalau belum ada pake placeholder dulu -->
-        <img src="diki.jpeg" alt="Foto Profil">
-      </div>
-      <div class="about-text">
-        <p>Saya seorang Junior Web Developer yang fokus di HTML, CSS, dan JavaScript. Saya senang membuat website yang enak dilihat dan mudah digunakan.</p>
-        <p>Saya terbiasa membuat landing page, website toko, dan company profile. Saya detail, disiplin, dan cepat belajar hal baru.</p>
+<!-- HERO -->
+<section id="beranda" class="hero">
+  <div class="container hero-wrap">
+    <div class="hero-text">
+      <h1>BAKSO ENAK, <br><span>KUAH GURIH,</span> <br>BIKIN NAGIH!</h1>
+      <p>Bakso Pakde Gimin hadir dengan bahan berkualitas pilihan dan kuah kaldu ayam asli yang gurih alami.</p>
+      <div class="hero-btn">
+        <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-red">🛒 PESAN SEKARANG</a>
+        <a href="#menu" class="btn btn-outline">🍜 LIHAT MENU</a>
       </div>
     </div>
-  </section>
-
-  <!-- SECTION 3: PORTOFOLIO / GALERI FOTO -->
-  <section id="portfolio" class="portfolio">
-    <h2>Portofolio Saya</h2>
-    <p>Ini beberapa project website yang pernah saya kerjakan</p>
-    <div class="portfolio-grid">
-      
-      <!-- KARTU 1 -->
-      <div class="portfolio-card">
-        <!-- TARO FOTO SCREENSHOT WEB KAMU DI FOLDER YANG SAMA -->
-        <img src="bakso.jpeg" alt="Website Bakso"> 
-        <div class="card-info">
-          <h3>Website Jualan Bakso</h3>
-          <p>Design landing page untuk UMKM kuliner</p>
-        </div>
-      </div>
-
-      <!-- KARTU 2 -->
-      <div class="portfolio-card">
-        <img src="ecomerce.jpeg" alt="Website Toko"> 
-        <div class="card-info">
-          <h3>Website Toko Online</h3>
-          <p>Catalog produk dengan tampilan modern</p>
-        </div>
-      </div>
-
-      <!-- KARTU 3 -->
-      <div class="portfolio-card">
-        <img src="company.jpeg" alt="Company Profile"> 
-        <div class="card-info">
-          <h3>Company Profile</h3>
-          <p>Website profil perusahaan 1 halaman</p>
-        </div>
-      </div>
-
+    <div class="hero-img">
+      <img src="ayam.jpg" alt="Bakso">
+      <div class="badge">100%<br>DAGING AYAM<br>ASLI</div>
     </div>
-  </section>
-
-  <!-- SECTION 4: KONTAK -->
-  <section id="contact" class="contact">
-    <h2>Hubungi Saya</h2>
-    <p>Tertarik bekerja sama? Yuk ngobrol di WhatsApp</p>
-    
-    <a href="https://wa.me/6281585059946?text=Halo%20Kak%20Diki,%20saya%20tertarik%20dengan%20portofolio%20Anda" target="_blank" rel="noopener noreferrer" class="btn-wa">Chat via WhatsApp</a>
-
+  </div>
 </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>&copy; 2026 Diki Dwi Nugroho. Dibuat dengan ❤️</p>
-  </footer>
+<!-- FEATURES -->
+<section class="features container">
+  <div class="feature"><div class="icon">🥩</div><div><h4>BAHAN BERKUALITAS</h4><p>Daging ayam segar pilihan setiap hari</p></div></div>
+  <div class="feature"><div class="icon">🍲</div><div><h4>KUAH KALDU ASLI</h4><p>Dimasak dengan tulang sapi selama berjam-jam</p></div></div>
+  <div class="feature"><div class="icon">🧼</div><div><h4>HIGIENIS & BERSIH</h4><p>Diproses secara higienis dan terjamin kebersihannya</p></div></div>
+  <div class="feature"><div class="icon">✅</div><div><h4>HALAL & AMAN</h4><p>Bersertifikat halal, aman untuk dikonsumsi</p></div></div>
+</section>
 
-  <!-- Link ke JavaScript -->
-  <script src="script.js"></script>
+<!-- MENU -->
+<section id="menu" class="menu">
+  <div class="container">
+    <h2 class="section-title">MENU FAVORIT KAMI</h2>
+    <div class="menu-grid">
+      <div class="card">
+        <img src="telur.jpg" alt="">
+        <h3>Bakso Telur</h3>
+        <p>Bakso urat, bakso halus, tahu, mie, dan pangsit</p>
+        <div class="price">Rp 15.000</div>
+        <button class="btn-pesan">Pesan</button>
+      </div>
+      <div class="card">
+        <img src="ayam.jpg">
+        <h3>Bakso biasa</h3>
+        <p>Bakso urat besar dengan kuah kaldu sapi</p>
+        <div class="price">Rp 10.000</div>
+        <button class="btn-pesan">Pesan</button>
+      </div>
+    </div>
+    <div class="center"><a href="#menu" class="btn btn-outline-red">LIHAT SEMUA MENU ></a></div>
+  </div>
+</section>
+
+<!-- KENAPA KAMI -->
+<section class="kenapa">
+  <div class="container kenapa-wrap">
+    <div class="kenapa-img">
+      <img src="ayam.jpg" alt="Tempat">
+    </div>
+    <div class="kenapa-text">
+      <h2>KENAPA HARUS BAKSO PAKDE GIMIN?</h2>
+      <p>Kami berkomitmen memberikan rasa terbaik dengan bahan pilihan dan pelayanan terbaik untuk pelanggan.</p>
+      <ul>
+        <li>✔ Daging ayam pilihan segar</li>
+        <li>✔ Porsi pas & mengenyangkan</li>
+        <li>✔ Tanpa bahan pengawet</li>
+        <li>✔ Pelayanan cepat & ramah</li>
+        <li>✔ Harga terjangkau</li>
+        <li>✔ Bisa pesan online</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ULASAN PELANGGAN -->
+<section id="ulasan" class="ulasan">
+  <div class="container">
+    <h2 class="section-title">ULASAN PELANGGAN</h2>
+    
+    <!-- FORM ULASAN -->
+    <div class="form-ulasan">
+      <h3>Tinggalkan Ulasan Kamu</h3>
+      <input type="text" id="namaUlasan" placeholder="Nama Kamu">
+      <textarea id="pesanUlasan" placeholder="Bagaimana rasa Bakso Pakde Gimin menurutmu?" rows="3"></textarea>
+      <div class="rating">
+        <span>Rating: </span>
+        <span class="bintang" data-nilai="1">☆</span>
+        <span class="bintang" data-nilai="2">☆</span>
+        <span class="bintang" data-nilai="3">☆</span>
+        <span class="bintang" data-nilai="4">☆</span>
+        <span class="bintang" data-nilai="5">☆</span>
+      </div>
+      <button class="btn btn-red" onclick="kirimUlasan()">Kirim Ulasan</button>
+    </div>
+
+    <!-- LIST ULASAN -->
+    <div id="listUlasan" class="list-ulasan">
+      <!-- Ulasan akan muncul di sini -->
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="kontak">
+  <div class="container footer-grid">
+    <div>
+      <div class="logo-footer"><img src="https://i.ibb.co/5rQ8g0K/bowl.png" alt=""> Bakso Pakde Gimin</div>
+      <p>Bakso enak, kuah gurih, bikin nagih!</p>
+      <div class="sosmed">📘 📷 💬 🎵</div>
+    </div>
+    <div><h4>Menu</h4><a href="#menu">Bakso biasa</a><a href="#menu">Bakso telur</a></div>
+    <div><h4>Informasi</h4><a href="#ulasan">Ulasan</a><a href="#">Cara Pemesanan</a><a href="#">Syarat & Ketentuan</a></div>
+    <div><h4>Kontak Kami</h4><p>Jl.Elang Raya Villa Gading Harapan Blok AJ 2 No 57<br>Babelan. 17610</p><p>0815-8505-9946</p></div>
+    <div><h4>Jam Buka</h4><p>Senin - Jumat<br>10.00 - 22.00</p><p>Sabtu - Minggu<br>09.00 - 23.00</p></div>
+  </div>
+  <p class="copy">© 2026 Bakso Pakde Gimin. All Rights Reserved.</p>
+</footer>
+
+<script src="perapihan.js"></script>
 </body>
 </html>
