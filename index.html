@@ -66,7 +66,7 @@
         <h3>Bakso Telur</h3>
         <p>Bakso Tekur, mie putih dan kuning </p>
         <div class="price">Rp 15.000</div>
-        <a href="https://wa.me/6281585059946?text=Halo%20Bakso%20Pakde%20Gimin%2C%20saya%20mau%20pesan%20Bakso%20Telur%20" 
+         <button class="btn-pesan" onclick="pesanWA('Bakso Telur', 15000)">Pesan Sekarang</button>
    class="btn-pesan" 
    target="_blank">Pesan</a>
       </div>
@@ -149,7 +149,50 @@
   </div>
   <p class="copy">© 2026 Bakso Pakde Gimin. All Rights Reserved.</p>
 </footer>
+<!-- POPUP FORM PESAN -->
+<div id="formPopup" class="popup">
+  <div class="popup-content">
+    <span class="close" onclick="tutupForm()">&times;</span>
+    <h3>Data Pesanan</h3>
+    <input type="text" id="nama" placeholder="Nama Anda" required>
+    <input type="text" id="alamat" placeholder="Alamat Lengkap" required>
+    <input type="text" id="nohp" placeholder="No HP" required>
+    <button onclick="kirimWA()">Kirim ke WhatsApp</button>
+  </div>
+</div>
 
+<script>
+let produkDipilih = "";
+let hargaDipilih = 0;
+const nomerWA = "6281585059946"; // ini udah nomer kamu
+
+function pesanWA(namaProduk, harga) {
+  produkDipilih = namaProduk;
+  hargaDipilih = harga;
+  document.getElementById("formPopup").style.display = "block";
+}
+
+function tutupForm() {
+  document.getElementById("formPopup").style.display = "none";
+}
+
+function kirimWA() {
+  const nama = document.getElementById("nama").value;
+  const alamat = document.getElementById("alamat").value;
+  const nohp = document.getElementById("nohp").value;
+
+  if(nama == "" || alamat == "" || nohp == "") {
+    alert("Isi semua data dulu ya");
+    return;
+  }
+
+  const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} Rp ${hargaDipilih.toLocaleString()}%0A%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}`;
+  
+  window.open(`https://wa.me/${nomerWA}?text=${pesan}`, '_blank');
+  tutupForm();
+}
+</script>
+</body>
 <script src="script.js"></script>
 </body>
   commit changes
