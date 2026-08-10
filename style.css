@@ -28,7 +28,7 @@ nav a.active{color:var(--merah);border-bottom:2px solid var(--merah);}
 .hero-btn{display:flex;gap:15px;justify-content:center;}
 .hero-img{position: relative;}
 .hero-img img{width:500px;border-radius:20px;}
-.badge{position:absolute;bottom:-20px;center:-20px;background:var(--merah);color:white;padding:20px;border-radius:50%;font-weight:800;font-size:14px;text-align:center;width:110px;height:110px;display:flex;align-items:center;justify-content:center;}
+.badge{position:absolute;bottom:-20px;right:-20px;background:var(--merah);color:white;padding:20px;border-radius:50%;font-weight:800;font-size:14px;text-align:center;width:110px;height:110px;display:flex;align-items:center;justify-content:center;}
 
 .features{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;background:white;padding:30px;border-radius:12px;margin-top:-40px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
 .feature{display:flex;gap:12px;align-items:center;}
