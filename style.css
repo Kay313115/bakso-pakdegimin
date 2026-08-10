@@ -21,7 +21,7 @@ nav a.active{color:var(--merah);border-bottom:2px solid var(--merah);}
 .hamburger{display:none;font-size:28px;cursor:pointer;}
 
 .hero{background:var(--coklat);color:white;padding:60px 0;}
-.hero-wrap{display:flex;gap:40px;align-items:center;}
+.hero-wrap{display:flex;gap:40px;align-items:right;}
 .hero-text h1{font-family:'Plus Jakarta Sans';font-size:42px;line-height:1.2;}
 .hero-text h1 span{color:#FFA500;}
 .hero-text p{margin:20px 0;opacity:0.9;max-width:400px;}
