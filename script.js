@@ -11,3 +11,19 @@ function simpanUlasanLokal(nama, pesan, rating){ let ulasanLokal = JSON.parse(lo
 async function kirimUlasan(){ const nama = document.getElementById('namaUlasan').value.trim(); const pesan = document.getElementById('pesanUlasan').value.trim(); if(nama === '' || pesan === '' || ratingTerpilih === 0){ return alert('Nama, Pesan, dan Rating wajib diisi!'); } simpanUlasanLokal(nama, pesan, ratingTerpilih); try { await fetch(URL_API, { method: "POST", mode: "no-cors", body: JSON.stringify({nama, pesan, rating: ratingTerpilih}) }); } catch(e) {} document.getElementById('namaUlasan').value = ''; document.getElementById('pesanUlasan').value = ''; ratingTerpilih = 0; updateBintang(); alert('Terima kasih atas ulasannya!'); tampilkanUlasan(); }
 function tampilkanUlasan(){ const list = document.getElementById('listUlasan'); let ulasanLokal = JSON.parse(localStorage.getItem('ulasanBakso')) || []; if(ulasanLokal.length === 0){ list.innerHTML = '<p style="text-align:center;opacity:0.7;">Belum ada ulasan. Jadilah yang pertama!</p>'; return; } list.innerHTML = ''; ulasanLokal.reverse().forEach(u => { let bintang = ''; for(let i=0; i<5; i++){ bintang += i < u.rating? '★' : '☆'; } list.innerHTML += `<div class="card-ulasan"><div class="header-ulasan"><span class="nama">${u.nama}</span><span class="bintang-ulasan">${bintang}</span></div><p>${u.pesan}</p><span class="tanggal">${u.tanggal}</span></div>`; }) }
 function toggleMenu() { document.getElementById("navMenu").classList.toggle("show"); }
+
+                          function kirimLokasi(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const linkMaps = `https://www.google.com/maps?q=${lat},${lng}`;
+      const pesan = `Halo Bakso Pakde Gimin 👋%0AIni titik lokasi saya:%0A${linkMaps}%0A%0ATolong kirim ke sini ya`;
+      window.open("https://wa.me/" + nomerWA + "?text=" + pesan, '_blank');
+    }, function(){
+      alert("Gagal ambil lokasi. Nyalain GPS dulu ya");
+    });
+  } else {
+    alert("HP kamu ga support GPS");
+  }
+                          }
