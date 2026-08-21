@@ -1,5 +1,5 @@
 const URL_API = "https://script.google.com/macros/s/AKfycbzNslAzXlXfgzLqlL4cMSfKoMaRMPTZD0hu74cj8pis12mTae37joYrIKRl_GXpfxjZpw/exec";
-const 
+
 
 let ratingTerpilih = 0;
 let produkDipilih = "";
