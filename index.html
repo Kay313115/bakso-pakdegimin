@@ -142,7 +142,7 @@
     <h3>Data Pesanan</h3>
     <input type="text" id="nama" placeholder="Nama Anda" required maxlength="50">
     <input type="text" id="alamat" placeholder="Alamat Lengkap" required maxlength="200">
-    <input type="tel" id="nohp" placeholder="No HP" required>
+      <input type="tel" id="nohp" placeholder="No HP - contoh: 081285059946" required maxlength="13" pattern="[0-9]{10,13}" inputmode="numeric">
     <button onclick="kirimWA()">Kirim ke WhatsApp</button>
   </div>
 </div>
