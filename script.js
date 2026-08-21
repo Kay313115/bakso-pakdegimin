@@ -9,6 +9,7 @@ const nomerWA = "6281585059946";
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g,
     tag => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[tag]));
+
 }
 
 // Bintang Ulasan
