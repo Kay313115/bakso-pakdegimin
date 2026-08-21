@@ -197,6 +197,12 @@ function kirimWA() {
   const pesan = "Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- " + produkDipilih + " : Rp " + subtotal.toLocaleString('id-ID') + "%0A- Ongkir : Rp " + ongkir.toLocaleString('id-ID') + "%0A-----------------------%0ATOTAL : Rp " + total.toLocaleString('id-ID') + "%0A%0AData Pemesan :%0ANama : " + nama + "%0AAlamat : " + alamat + "%0ANo HP : " + nohp;
 
   window.open("https://wa.me/" + nomerWA + "?text=" + pesan, '_blank', 'noopener,noreferrer');
+  document.getElementById("nama").value = "";
+  document.getElementById("alamat").value = "";
+  document.getElementById("nohp").value = "";
+  
+  tutupForm(); // Tutup popup nya juga
+}
   tutupForm();
 }
 
