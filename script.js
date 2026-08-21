@@ -1,18 +1,15 @@
 const URL_API = "https://script.google.com/macros/s/AKfycbzNslAzXlXfgzLqlL4cMSfKoMaRMPTZD0hu74cj8pis12mTae37joYrIKRl_GXpfxjZpw/exec";
 
-
 let ratingTerpilih = 0;
 let produkDipilih = "";
 let hargaDipilih = 0;
 const nomerWA = "6281585059946";
 
-// Fungsi Pengaman Karakter HTML
 function escapeHTML(str) {
   return str.replace(/[&<>"']/g,
     tag => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[tag]));
 }
 
-// Bintang Ulasan
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.bintang').forEach(bintang => {
     bintang.addEventListener('click', function(){
@@ -30,30 +27,17 @@ function updateBintang(){
   })
 }
 
-// ==========================================
-// FUNGSI UNTUK DATA PESAN & WHATSAPP
-// ==========================================
 function hitungOngkir(alamat) {
   alamat = alamat.toLowerCase();
-  
-  // 1. KHUS BLOK AJ RW 10 & RW 11 VGH = 3000
   if(alamat.includes("blok aj") || alamat.includes("blok a.j") || alamat.includes("blok a j")) {
     return 3000;
-  } 
-  // 2. VGH LAINNYA = 5000
-  else if(alamat.includes("villa gading") || alamat.includes("vgh") || alamat.includes("gading harapan")) {
+  } else if(alamat.includes("villa gading") || alamat.includes("vgh") || alamat.includes("gading harapan")) {
     return 5000;
-  } 
-  // 3. BABELAN = 7000
-  else if(alamat.includes("babelan")) {
+  } else if(alamat.includes("babelan")) {
     return 7000;
-  } 
-  // 4. BEKASI = 10000
-  else if(alamat.includes("bekasi")) {
+  } else if(alamat.includes("bekasi")) {
     return 10000;
-  } 
-  // 5. LAINNYA = 15000
-  else {
+  } else {
     return 15000;
   }
 }
@@ -74,13 +58,11 @@ function kirimWA() {
   const nohpInput = document.getElementById("nohp");
   const nohp = escapeHTML(nohpInput.value.trim());
 
-  // VALIDASI NO HP 10-13 DIGIT
   if(!/^[0-9]{10,13}$/.test(nohp)) {
     alert("No HP harus 10-13 digit angka ya!\nContoh: 081285059946");
     nohpInput.focus();
     return;
   }
-
   if(nama == "" || alamat == "") {
     alert("Isi semua data dulu ya");
     return;
@@ -93,18 +75,12 @@ function kirimWA() {
   const pesan = "Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- " + produkDipilih + " : Rp " + subtotal.toLocaleString('id-ID') + "%0A- Ongkir : Rp " + ongkir.toLocaleString('id-ID') + "%0A-----------------------%0ATOTAL : Rp " + total.toLocaleString('id-ID') + "%0A%0AData Pemesan :%0ANama : " + nama + "%0AAlamat : " + alamat + "%0ANo HP : " + nohp;
 
   window.open("https://wa.me/" + nomerWA + "?text=" + pesan, '_blank', 'noopener,noreferrer');
-
-  // RESET PAKSA FORM
   document.getElementById("nama").value = "";
   document.getElementById("alamat").value = "";
   document.getElementById("nohp").value = "";
-
   tutupForm();
 }
 
-// ==========================================
-// FUNGSI UNTUK KIRIM & TAMPILKAN ULASAN
-// ==========================================
 async function kirimUlasan(){
   const nama = document.getElementById('namaUlasan').value.trim();
   const pesan = document.getElementById('pesanUlasan').value.trim();
@@ -118,7 +94,6 @@ async function kirimUlasan(){
       method: "POST",
       body: JSON.stringify({nama, pesan, rating: ratingTerpilih})
     });
-
     document.getElementById('namaUlasan').value = '';
     document.getElementById('pesanUlasan').value = '';
     ratingTerpilih = 0;
@@ -161,5 +136,4 @@ async function tampilkanUlasan(){
 
 function toggleMenu() {
   document.getElementById("navMenu").classList.toggle("show");
-}
-
+                                                                                                                                                                                  }
