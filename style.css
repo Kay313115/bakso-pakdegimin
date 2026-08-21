@@ -163,3 +163,7 @@ footer{background:var(--coklat);color:white;padding:40px 0;margin-top:40px;}
   .popup-content { margin: 30% auto 0 auto; } /* POPUP DI HP LEBIH KE BAWAH */
 }
 
+document.getElementById("nama").value = "";
+document.getElementById("alamat").value = "";
+document.getElementById("nohp").value = "";
+tutupForm();
