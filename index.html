@@ -161,10 +161,28 @@ function escapeHTML(str) {
   return str.replace(/[&<>"']/g,
     tag => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[tag]));
 }
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g,
+    tag => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[tag]));
+}
 
 let produkDipilih = "";
 let hargaDipilih = 0;
 const nomerWA = "6281585059946";
+
+// 1. TAMBAHIN FUNGSI INI - BUAT HITUNG ONGKIR OTOMATIS
+function hitungOngkir(alamat) {
+  alamat = alamat.toLowerCase();
+  if(alamat.includes("villa gading") || alamat.includes("vgh") || alamat.includes("gading harapan")) {
+    return 5000; // VGH
+  } else if(alamat.includes("babelan")) {
+    return 7000; // Babelan
+  } else if(alamat.includes("bekasi")) {
+    return 10000; // Bekasi
+  } else {
+    return 15000; // Luar
+  }
+}
 
 function pesanWA(namaProduk, harga) {
   produkDipilih = namaProduk;
@@ -177,7 +195,7 @@ function tutupForm() {
 }
 
 function kirimWA() {
-  const nama = escapeHTML(document.getElementById("nama").value.trim()); // BARU: escape + trim
+  const nama = escapeHTML(document.getElementById("nama").value.trim());
   const alamat = escapeHTML(document.getElementById("alamat").value.trim());
   const nohp = escapeHTML(document.getElementById("nohp").value.trim());
 
@@ -186,19 +204,22 @@ function kirimWA() {
     return;
   }
 
-  // BARU: Validasi No HP
   if(!/^[0-9]{10,13}$/.test(nohp)) {
     alert("No HP harus 10-13 angka");
     return;
   }
 
-  const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} Rp ${hargaDipilih.toLocaleString('id-ID')}%0A%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}`;
+  // 2. UBAH BAGIAN INI - TAMBAH HITUNG ONGKIR + TOTAL
+  const ongkir = hitungOngkir(alamat); // BARU
+  const subtotal = hargaDipilih; // BARU
+  const total = subtotal + ongkir; // BARU
 
-  window.open(`https://wa.me/${nomerWA}?text=${pesan}`, '_blank', 'noopener,noreferrer'); // BARU: lebih aman
+  const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} : Rp ${subtotal.toLocaleString('id-ID')}%0A- Ongkir : Rp ${ongkir.toLocaleString('id-ID')}%0A-----------------------%0ATOTAL : Rp ${total.toLocaleString('id-ID')}%0A%0AData Pemesan :%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}`; // UDAH DIUBAH
+
+  window.open(`https://wa.me/${nomerWA}?text=${pesan}`, '_blank', 'noopener,noreferrer');
   tutupForm();
 }
 
-// BARU: Fungsi kirimUlasan biar aman juga
 function kirimUlasan() {
   const nama = escapeHTML(document.getElementById("namaUlasan").value.trim());
   const pesan = escapeHTML(document.getElementById("pesanUlasan").value.trim());
@@ -219,6 +240,7 @@ function kirimUlasan() {
   document.getElementById("namaUlasan").value = "";
   document.getElementById("pesanUlasan").value = "";
   alert("Makasih udah kasih ulasan!");
+
 }
 </script>
 function escapeHTML(str) {
