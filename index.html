@@ -107,11 +107,11 @@
 </section>
 
 <!-- ULASAN PELANGGAN -->
+
 <section id="ulasan" class="ulasan">
   <div class="container">
     <h2 class="section-title">ULASAN PELANGGAN</h2>
     <div class="form-ulasan">
-      <div class="form-ulasan">
       <h3>Tinggalkan Ulasan Kamu</h3>
       <div class="rating">
         <span class="bintang" data-nilai="1">★</span>
@@ -121,11 +121,12 @@
         <span class="bintang" data-nilai="5">★</span>
       </div>
       <input type="text" id="namaUlasan" placeholder="Nama Kamu" maxlength="50">
+      <textarea id="pesanUlasan" placeholder="Bagaimana rasa Bakso Pakde Gimin menurutmu?" rows="3" maxlength="300"></textarea>
+      <button class="btn btn-red" onclick="kirimUlasan()">Kirim Ulasan</button>
     </div>
     <div id="listUlasan" class="list-ulasan"></div>
   </div>
 </section>
-
 <!-- FOOTER -->
 <footer id="kontak">
   <div class="container footer-grid">
