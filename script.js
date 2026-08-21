@@ -76,7 +76,3 @@ async function tampilkanUlasan(){
     list.innerHTML = '<p style="text-align:center;color:red;">Gagal memuat ulasan</p>';
   }
 }
-document.getElementById("nama").value = "";
-document.getElementById("alamat").value = "";
-document.getElementById("nohp").value = "";
-tutupForm();
