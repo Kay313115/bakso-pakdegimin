@@ -90,10 +90,7 @@ footer{background:var(--coklat);color:white;padding:40px 0;margin-top:40px;}
   background-color: rgba(0,0,0,0.7);
   padding: 20px;
   box-sizing: border-box;
-  document.getElementById("nama").value = "";
-document.getElementById("alamat").value = "";
-document.getElementById("nohp").value = "";
-tutupForm();
+  
 }
 
 .popup-content {
