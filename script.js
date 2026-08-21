@@ -35,13 +35,25 @@ function updateBintang(){
 // ==========================================
 function hitungOngkir(alamat) {
   alamat = alamat.toLowerCase();
-  if(alamat.includes("villa gading") || alamat.includes("vgh") || alamat.includes("gading harapan")) {
+  
+  // 1. KHUS BLOK AJ RW 10 & RW 11 VGH = 3000
+  if(alamat.includes("blok aj") || alamat.includes("blok a.j") || alamat.includes("blok a j")) {
+    return 3000;
+  } 
+  // 2. VGH LAINNYA = 5000
+  else if(alamat.includes("villa gading") || alamat.includes("vgh") || alamat.includes("gading harapan")) {
     return 5000;
-  } else if(alamat.includes("babelan")) {
+  } 
+  // 3. BABELAN = 7000
+  else if(alamat.includes("babelan")) {
     return 7000;
-  } else if(alamat.includes("bekasi")) {
+  } 
+  // 4. BEKASI = 10000
+  else if(alamat.includes("bekasi")) {
     return 10000;
-  } else {
+  } 
+  // 5. LAINNYA = 15000
+  else {
     return 15000;
   }
 }
