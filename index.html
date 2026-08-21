@@ -81,7 +81,9 @@
     <div class="center"><a href="#menu" class="btn btn-outline-red">LIHAT SEMUA MENU ></a></div>
   </div>
 </section>
-
+<p style="text-align:center; font-size:14px; color:#666; margin-top:-10px;">
+  *Ongkir: VGH 5rb | Babelan 7rb | Bekasi 10rb*
+</p>
 <!-- KENAPA KAMI -->
 <section class="kenapa">
   <div class="container kenapa-wrap">
@@ -347,9 +349,30 @@ function kirimUlasan() {
 </div>
 
 <script>
+
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g,
+    tag => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[tag]));
+}
+
 let produkDipilih = "";
 let hargaDipilih = 0;
-const nomerWA = "6281585059946"; // ini udah nomer kamu
+const nomerWA = "6281585059946";
+
+// ONGKIR KHUS AREA VGH
+function hitungOngkir(alamat) {
+  alamat = alamat.toLowerCase();
+
+  if(alamat.includes("villa gading") || alamat.includes("vgh") || alamat.includes("gading harapan")) {
+    return 5000; // VGH
+  } else if(alamat.includes("babelan") || alamat.includes("muaragemlong")) {
+    return 7000; // Sekitar VGH
+  } else if(alamat.includes("bekasi")) {
+    return 10000; // Bekasi kota
+  } else {
+    return 15000; // Luar Bekasi
+  }
+}
 
 function pesanWA(namaProduk, harga) {
   produkDipilih = namaProduk;
@@ -362,22 +385,54 @@ function tutupForm() {
 }
 
 function kirimWA() {
-  const nama = document.getElementById("nama").value;
-  const alamat = document.getElementById("alamat").value;
-  const nohp = document.getElementById("nohp").value;
+  const nama = escapeHTML(document.getElementById("nama").value.trim());
+  const alamat = escapeHTML(document.getElementById("alamat").value.trim());
+  const nohp = escapeHTML(document.getElementById("nohp").value.trim());
 
   if(nama == "" || alamat == "" || nohp == "") {
     alert("Isi semua data dulu ya");
     return;
   }
 
-  const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} Rp ${hargaDipilih.toLocaleString()}%0A%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}`;
-  
-  window.open(`https://wa.me/${nomerWA}?text=${pesan}`, '_blank');
+  if(!/^[0-9]{10,13}$/.test(nohp)) {
+    alert("No HP harus 10-13 angka");
+    return;
+  }
+
+  const ongkir = hitungOngkir(alamat);
+  const subtotal = hargaDipilih;
+  const total = subtotal + ongkir;
+
+  const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} : Rp ${subtotal.toLocaleString('id-ID')}%0A- Ongkir : Rp ${ongkir.toLocaleString('id-ID')}%0A-----------------------%0ATOTAL : Rp ${total.toLocaleString('id-ID')}%0A%0AData Pemesan :%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}%0A%0A*Note: Ongkir VGH 5rb, Babelan 7rb, Bekasi 10rb*`;
+
+  window.open(`https://wa.me/${nomerWA}?text=${pesan}`, '_blank', 'noopener,noreferrer');
   tutupForm();
 }
+
+function kirimUlasan() {
+  const nama = escapeHTML(document.getElementById("namaUlasan").value.trim());
+  const pesan = escapeHTML(document.getElementById("pesanUlasan").value.trim());
+
+  if(nama == "" || pesan == "") {
+    alert("Nama dan ulasan wajib diisi");
+    return;
+  }
+
+  const ulasanBaru = `
+    <div class="item-ulasan">
+      <h4>${nama}</h4>
+      <p>${pesan}</p>
+    </div>
+  `;
+  document.getElementById("listUlasan").insertAdjacentHTML('afterbegin', ulasanBaru);
+
+  document.getElementById("namaUlasan").value = "";
+  document.getElementById("pesanUlasan").value = "";
+  alert("Makasih udah kasih ulasan!");
+}
+
 </script>
-  
+
 
   <script src="script.js"></script>
 </body>
