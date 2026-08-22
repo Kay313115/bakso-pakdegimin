@@ -3,15 +3,14 @@ let ratingTerpilih = 0;let produkDipilih = "";let hargaDipilih = 0;const nomerWA
 
 function escapeHTML(str) { return str.replace(/[&<>"']/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[tag])); }
 
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.bintang').forEach(bintang => {
-    bintang.addEventListener('click', function(){
-      ratingTerpilih = parseInt(this.dataset.nilai);
-      updateBintang();
-    })
-  }); // <-- INI TADI KURANG
-  tampilkanUlasan();
-}); // <-- INI JUGA TADI KURANG
+// LANGSUNG JALAN KARENA PAKE DEFER
+document.querySelectorAll('.bintang').forEach(bintang => {
+  bintang.addEventListener('click', function(){
+    ratingTerpilih = parseInt(this.dataset.nilai);
+    updateBintang();
+  })
+});
+tampilkanUlasan(); // LANGSUNG PANGGIL
 
 function updateBintang(){ document.querySelectorAll('.bintang').forEach((b, i) => { if(i < ratingTerpilih) b.classList.add('aktif'); else b.classList.remove('aktif'); }) }
 
@@ -21,7 +20,7 @@ function pesanWA(namaProduk, harga) { produkDipilih = namaProduk; hargaDipilih =
 
 function tutupForm() { document.getElementById("formPopup").style.display = "none"; }
 
-function kirimWA() { const nama = escapeHTML(document.getElementById("nama").value.trim()); const alamat = escapeHTML(document.getElementById("alamat").value.trim()); const nohp = escapeHTML(document.getElementById("nohp").value.trim()); if(!/^[0-9]{10,13}$/.test(nohp)) { alert("No HP harus 10-13 digit angka ya!"); return; } if(nama == "" || alamat == "") { alert("Isi semua data dulu ya"); return; } const ongkir = hitungOngkir(alamat); const total = hargaDipilih + ongkir; const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} : Rp ${hargaDipilih.toLocaleString('id-ID')}%0A- Ongkir : Rp ${ongkir.toLocaleString('id-ID')}%0A-----------------------%0ATOTAL : Rp ${total.toLocaleString('id-ID')}%0A%0AData Pemesan :%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}`; window.open("https://wa.me/" + nomerWA + "?text=" + pesan, '_blank'); tutupForm(); }
+function kirimWA() { const nama = escapeHTML(document.getElementById("nama").value.trim()); const alamat = escapeHTML(document.getElementById("alamat").value.trim()); const nohp = escapeHTML(document.getElementById("nohp").value.trim()); if(!/^[0-9]{10,13}$/.test(nohp)) { alert("No HP harus 10-13 digit angka ya!"); return; } if(nama == "" || alamat == "") { alert("Isi semua data dulu ya"); return; } const ongkir = hitungOngkir(alamat); const total = hargaDipilih + ongkir; const pesan = `Halo Bakso Pakde Gimin 👋%0A%0ASaya mau pesan :%0A- ${produkDipilih} : Rp ${hargaDipilih.toLocaleString('id-ID')}%0A- Ongkir : Rp ${ongkir.toLocaleString('id-ID')}%0A-----------------------%0ATOTAL : Rp ${total.toLocaleString('id-ID')}%0A%0AData Pesanan :%0ANama : ${nama}%0AAlamat : ${alamat}%0ANo HP : ${nohp}`; window.open("https://wa.me/" + nomerWA + "?text=" + pesan, '_blank'); tutupForm(); }
 
 function simpanUlasanLokal(nama, pesan, rating){ let ulasanLokal = JSON.parse(localStorage.getItem('ulasanBakso')) || []; ulasanLokal.push({nama, pesan, rating, tanggal: new Date().toLocaleDateString('id-ID')}); localStorage.setItem('ulasanBakso', JSON.stringify(ulasanLokal)); }
 
