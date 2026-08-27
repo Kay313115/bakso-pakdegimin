@@ -71,6 +71,7 @@ function tampilkanUlasan(){
           <span class="bintang-ulasan">${bintang}</span>
         </div>
         <p>${u.ulasan}</p>
+        
         <span class="tanggal">${u.tanggal}</span>
       </div>`; 
     }) 
@@ -80,3 +81,11 @@ function tampilkanUlasan(){
 
 // JALANKAN SAAT HALAMAN DIBUKA
 tampilkanUlasan();
+
+    function doPost(e) {
+      const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
+      const data = JSON.parse(e.postData.contents);
+      sheet.appendRow([data.nama, data.ulasan, data.rating, new Date()]);
+      return ContentService.createTextOutput(JSON.stringify({result: "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+    }
