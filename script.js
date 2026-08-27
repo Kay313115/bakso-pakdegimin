@@ -1,4 +1,4 @@
-const URL_API = "https://script.google.com/macros/s/AKfycbz4wVxTKfmPcD_KcUrpXDDPnRNexLG96enIGB-Dz7dcpoN-HOScCcb62TVcSYuJKUQU4Q/execc";
+const URL_API = "https://script.google.com/macros/s/AKfycbz4wVxTKfmPcD_KcUrpXDDPnRNexLG96enIGB-Dz7dcpoN-HOScCcb62TVcSYuJKUQU4Q/exec";
 let ratingTerpilih = 0;
 
 function escapeHTML(str) { 
