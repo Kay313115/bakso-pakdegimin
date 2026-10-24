@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kuliner Pakde Gimin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+:root{--navy:#1E3356;--blue:#2563EB;--border:#E2E8F0;--bg:#F8FAFC;--red:#EF4444;--green:#16A34A}
+html,body{width:100%;overflow-x:hidden}
+body{background:var(--bg);display:flex;min-height:100vh;min-height:100dvh;color:#0F172A}
+
+/* SIDEBAR - FIX PAKAI TRANSFORM BIAR HALUS DI HP */
+.sidebar{
+  width:280px;min-width:280px;background:var(--navy);color:#fff;
+  padding:22px 16px;display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;height:100dvh;z-index:200;
+  transition:transform .28s ease;
+  overflow-y:auto;
+}
+.logo{display:flex;gap:12px;padding:0 8px 22px 8px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:18px}
+.logo-icon{width:44px;height:44px;background:#FF6B35;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.logo-title{font-size:15px;font-weight:700;line-height:1.1}
+.logo-title span{display:block;font-size:10px;background:#FF6B35;padding:4px 9px;border-radius:20px;margin-top:6px;width:fit-content}
+.menu{display:flex;flex-direction:column;gap:6px}
+.menu-item{padding:12px 14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:13.5px;color:#94A3B8;transition:.15s;min-height:44px}
+.menu-item.active{background:#2E4A71;color:#fff;font-weight:700}
+.badge-new,.badge-keluar{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;color:#fff;flex-shrink:0}
+.badge-new{background:var(--red)}.badge-keluar{background:var(--green)}
+
+/* MAIN */
+.main{flex:1;min-width:0;padding:20px 24px;max-width:1400px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.top-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.hamburger{display:none;width:44px;height:44px;background:#fff;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;font-size:20px;align-items:center;justify-content:center;flex-shrink:0}
+.top h1{font-size:24px;font-weight:800;line-height:1.1;word-break:break-word}
+.secure-badge{background:#DCFCE7;color:#166534;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-top:6px;display:inline-flex}
+.search-wrap{position:relative;flex-shrink:0}
+.search-wrap::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+.search{padding:12px 16px 12px 38px;border:1.5px solid var(--border);border-radius:24px;width:300px;font-size:16px;background:#fff;outline:none;transition:.2s}
+.search:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+
+/* STATS - RESPONSIVE GRID */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#fff;padding:16px;border-radius:16px;border:2px solid var(--border);cursor:pointer;transition:.2s;min-width:0}
+.stat b{font-size:28px;font-weight:800;margin:8px 0 2px;display:block}
+.stat p{font-size:12px;color:#64748B}
+.blue{background:#EFF6FF;border-color:#DBEAFE}.orange{background:#FFF7ED;border-color:#FFEDD5}.purple{background:#F5F3FF;border-color:#EDE9FE}.green{background:#F0FDF4;border-color:#DCFCE7}
+
+/* ORDERS */
+.orders-head{display:flex;justify-content:space-between;align-items:center;margin:8px 0 14px;flex-wrap:wrap;gap:10px}
+.filter-group{display:flex;gap:4px;background:#fff;padding:4px;border-radius:24px;border:1px solid var(--border);overflow-x:auto}
+.filter-btn{padding:8px 14px;border-radius:20px;border:none;background:transparent;font-size:12.5px;font-weight:600;cursor:pointer;color:#64748B;white-space:nowrap;min-height:36px}
+.filter-btn.active{background:#0F172A;color:#fff}
+.btn-manual{padding:9px 14px;border-radius:20px;border:1.5px solid var(--blue);color:var(--blue);background:#fff;font-size:12px;font-weight:600;cursor:pointer;min-height:38px;white-space:nowrap}
+.btn-clear{border-color:var(--red);color:var(--red);background:#FFF1F2}
+
+.orders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:.2s;min-width:0;overflow:hidden}
+.card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+.card-time{background:#F1F5F9;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.tag{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;margin-left:6px;white-space:nowrap}
+.tag-verif{background:#FFEDD5;color:#9A3412}.tag-proses{background:#EDE9FE;color:#5B21B6}.tag-antar{background:#DCFCE7;color:#166534}.tag-selesai{background:#DCFCE7;color:#14532D}
+.card b.user{display:block;font-size:13px;word-break:break-word}
+.card p.menu{font-size:12px;color:#64748B;margin:4px 0;word-break:break-word}
+.card small.addr{font-size:11px;color:#94A3B8;display:block;word-break:break-word;line-height:1.3}
+.card-actions{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:8px;margin-top:12px}
+.card-actions button{padding:10px 8px;border-radius:12px;border:1.5px solid var(--border);font-size:11.5px;font-weight:600;cursor:pointer;background:#fff;min-height:40px;white-space:nowrap}
+.card-actions .primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:700}
+.empty{grid-column:1/-1;background:#fff;border:2px dashed #CBD5E1;border-radius:16px;padding:30px;text-align:center;color:#64748B}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;backdrop-filter:blur(2px)}.overlay.show{display:block}
+.section-title{font-size:13px;font-weight:700;margin:18px 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.section-title span{font-size:10px;padding:3px 8px;border-radius:20px;background:#fff;border:1px solid var(--border)}
+
+/* ===== MOBILE FIX TOTAL ===== */
+@media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.orders{grid-template-columns:1fr}.search{width:260px}}
+@media(max-width:768px){
+  body{flex-direction:column}
+  .hamburger{display:flex}
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;height:100dvh;
+    transform:translateX(-100%);max-width:85vw;width:85vw;min-width:0;
+    padding-top:max(20px, env(safe-area-inset-top));
+  }
+  .sidebar.open{transform:translateX(0)}
+  .main{padding:14px;padding-bottom:30px;width:100%;max-width:100%}
+  .top{align-items:flex-start}
+  .top h1{font-size:20px}
+  .search-wrap{width:100%}
+  .search{width:100%;font-size:16px}
+  .stats{grid-template-columns:1fr 1fr;gap:8px}
+  .stat{padding:12px;border-radius:14px}
+  .stat b{font-size:22px}
+  .stat small{font-size:11px}
+  .orders-head{flex-direction:column;align-items:stretch}
+  .filter-group{width:100%;justify-content:space-between}
+  .card{padding:14px;border-radius:14px}
+  .card-actions{grid-template-columns:1fr;gap:6px}
+  .card-actions button{min-height:44px;font-size:13px}
+}
+@media(max-width:380px){
+  .stats{grid-template-columns:1fr}
+  .top h1{font-size:18px}
+}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="logo"><div class="logo-icon">🍲</div><div class="logo-title">Warung Bakso<br>Pakde Gimin</div></div>
+  <div class="menu">
+    <div class="menu-item active" id="menu-dashboard" onclick="setPage('dashboard'); toggleSidebar()">☰ Dashboard</div>
+    <div class="menu-item" id="menu-masuk" onclick="setPage('masuk'); toggleSidebar()">📋 Orderan Masuk <span class="badge-new" id="badge-baru">0 Baru</span></div>
+    <div class="menu-item" id="menu-keluar" onclick="setPage('keluar'); toggleSidebar()">📦 Orderan Keluar <span class="badge-keluar" id="badge-keluar">0 Selesai</span></div>
+    <div class="menu-item" onclick="alert('Menu masih dummy')">🍜 Menu</div>
+    <div class="menu-item" onclick="alert('Laporan masih dummy')">📊 Laporan</div>
+  </div>
+</div>
+<div class="main">
+  <div class="top">
+    <div class="top-left">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div><h1 id="page-title">Dashboard</h1><div class="secure-badge">✅ Auto Refresh</div></div>
+    </div>
+    <div class="search-wrap"><input class="search" id="searchInput" placeholder="Cari nama, WA, alamat..." onkeyup="filterSearch()" maxlength="50"></div>
+  </div>
+  <div class="stats">
+    <div class="stat blue active" id="stat-semua" onclick="setPage('dashboard')"><small>👜 Total</small><b id="total-order">0</b><p>Semua</p></div>
+    <div class="stat orange" id="stat-menunggu" onclick="setPage('masuk')"><small>📥 Masuk</small><b id="total-verif">0</b><p>Belum keluar</p></div>
+    <div class="stat purple" id="stat-diproses" onclick="setPage('masuk')"><small>⚙️ Proses</small><b id="total-proses">0</b><p>Disiapkan</p></div>
+    <div class="stat green" id="stat-siap" onclick="setPage('keluar')"><small>📦 Keluar</small><b id="total-selesai">0</b><p>Sudah sampai</p></div>
+  </div>
+  <div id="content-area"></div>
+</div>
+<script>
+// JS lu tetap sama, gak gue ubah
+let currentPage='dashboard', selectedId=null;
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function setPage(p){
+  currentPage=p;
+  document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));
+  let el=document.getElementById('menu-'+p); if(el) el.classList.add('active');
+  document.getElementById('page-title').textContent = p==='dashboard'?'Dashboard':p==='masuk'?'Orderan Masuk':'Orderan Keluar';
+  document.querySelectorAll('.stat').forEach(s=>s.classList.remove('active'));
+  if(p==='masuk') document.getElementById('stat-menunggu').classList.add('active');
+  else if(p==='keluar') document.getElementById('stat-siap').classList.add('active');
+  else document.getElementById('stat-semua').classList.add('active');
+  renderLocal();
+}
+function filterSearch(){
+  let q=document.getElementById('searchInput').value.toLowerCase().slice(0,50);
+  document.querySelectorAll('.card').forEach(c=>{c.style.display=c.innerText.toLowerCase().includes(q)?'block':'none';});
+}
+function escapeHTML(s){return String(s||'').replace(/[&<>"'`=\/]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#x60;','=':'&#x3D;','/':'&#x2F;'}[c]))}
+function sanitizeText(t,max=50){t=String(t||'').trim().slice(0,max); if(/<script|onerror|onload|javascript:/i.test(t)) return '[blocked]'; return escapeHTML(t);}
+function sanitizeWA(w){w=String(w).replace(/[^0-9]/g,'').slice(0,15); return /^(08|628|62)/.test(w)?w:'';}
+function safeParse(k){try{let d=JSON.parse(localStorage.getItem(k)); if(!d.id||!d.nama) throw 0; return d;}catch{localStorage.removeItem(k); return null;}}
+function selectCard(id){selectedId=id;document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));let el=document.getElementById('card-'+id); if(el) el.classList.add('selected');}
+function openManualOrder(){
+  let n=prompt('Nama (max 30):'); if(n===null) return;
+  let w=prompt('WA 08xx:'); if(w===null) return;
+  let a=prompt('Alamat (max 80):'); if(a===null) return;
+  let nama=sanitizeText(n,30), wa=sanitizeWA(w), alamat=sanitizeText(a,80);
+  if(!nama||wa==''||!alamat){alert('Data tidak valid');return;}
+  let id='BK'+Math.floor(10000+Math.random()*90000);
+  localStorage.setItem('pesanan_'+id, JSON.stringify({id,nama,wa,alamat,cart:[{name:'Bakso Biasa',qty:1}],total:25000,status:'menunggu',waktu:new Date().toISOString()}));
+  localStorage.setItem('last_id', id);localStorage.setItem('bakso_trigger', Date.now().toString());
+  try{ if(window.baksoBC) window.baksoBC.postMessage({type:'new_order'}); }catch(e){}
+  setPage('masuk');
+}
+function makeCard(d){
+  let jam=new Date(d.waktu).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  let statusMap={menunggu:['tag-verif','Menunggu'], disiapkan:['tag-proses','Diproses'], diantar:['tag-antar','Kurir Jalan'], selesai:['tag-selesai','Sampai']};
+  let [tagClass,tagText]=statusMap[d.status]||statusMap.menunggu;
+  let isVerif = d.status!=='menunggu';
+  let isSiap = ['disiapkan','diantar','selesai'].includes(d.status);
+  let isAntar = ['diantar','selesai'].includes(d.status);
+  let isSampai = d.status==='selesai';
+  return `<div class="card ${selectedId==d.id?'selected':''}" id="card-${escapeHTML(d.id)}" onclick="selectCard('${escapeHTML(d.id)}')"><div class="card-top"><span class="card-time">⏰ ${escapeHTML(jam)}</span><span><b>#${escapeHTML(d.id)}</b><span class="tag ${tagClass}">${escapeHTML(tagText)}</span></span></div><b class="user">👤 ${escapeHTML(d.nama)} • ${escapeHTML(d.wa)}</b><p class="menu">${escapeHTML(d.cart.map(c=>c.name+' x'+c.qty).join(', '))}</p><small class="addr">📍 ${escapeHTML(d.alamat)} • COD - Rp${Number(d.total).toLocaleString('id-ID')}</small><div class="card-actions" onclick="event.stopPropagation()"><button class="${isVerif?'active-verif':''}" onclick="updateLocal('${escapeHTML(d.id)}','menunggu')">${isVerif?'✅ Diterima':'✓ Verifikasi'}</button><button class="${isSiap?'active-siap':''}" onclick="updateLocal('${escapeHTML(d.id)}','disiapkan')">${isSiap?'🔥 Dimasak':'Siapkan'}</button>${!isAntar?`<button class="primary" onclick="updateLocal('${escapeHTML(d.id)}','diantar')">🛵 Kurir</button>`:!isSampai?`<button class="primary active-antar" onclick="updateLocal('${escapeHTML(d.id)}','selesai')">📦 Sampai</button>`:`<button class="primary active-selesai">✅ Sampai</button>`}</div></div>`;
+}
+function renderLocal(){
+  let keys=Object.keys(localStorage).filter(k=>k.startsWith('pesanan_'));
+  let data=[]; keys.forEach(k=>{let d=safeParse(k); if(d) data.push(d);});
+  data.sort((a,b)=>new Date(a.waktu)-new Date(b.waktu));
+  let masukData=data.filter(d=>d.status==='menunggu'||d.status==='disiapkan');
+  let keluarData=data.filter(d=>d.status==='diantar'||d.status==='selesai');
+  document.getElementById('total-order').textContent=data.length;
+  document.getElementById('badge-baru').textContent=masukData.length+' Baru';
+  document.getElementById('badge-keluar').textContent=keluarData.length+' Selesai';
+  document.getElementById('total-verif').textContent=masukData.filter(d=>d.status==='menunggu').length;
+  document.getElementById('total-proses').textContent=masukData.filter(d=>d.status==='disiapkan').length;
+  document.getElementById('total-selesai').textContent=keluarData.length;
+  let area=document.getElementById('content-area');
+  area.innerHTML=`<div class="orders-head"><h2 id="list-title"></h2><div style="display:flex;gap:8px;flex-wrap:wrap"><div class="filter-group"><button class="filter-btn ${currentPage==='dashboard'?'active':''}" onclick="setPage('dashboard')">Semua</button><button class="filter-btn ${currentPage==='masuk'?'active':''}" onclick="setPage('masuk')">Masuk</button><button class="filter-btn ${currentPage==='keluar'?'active':''}" onclick="setPage('keluar')">Keluar</button></div><button class="btn-manual" onclick="openManualOrder()">+ Order</button><button class="btn-manual btn-clear" onclick="location.href=location.pathname+'?clear=1'">🗑️ Clear</button></div></div>`;
+  if(currentPage==='masuk'){
+    document.getElementById('list-title').textContent=`Orderan Masuk (${masukData.length})`;
+    let grid=document.createElement('div'); grid.className='orders';
+    grid.innerHTML=masukData.length?masukData.map(makeCard).join(''):`<div class="empty"><b>Masuk Kosong ✅</b><p>Semua orderan sudah keluar</p></div>`;
+    area.appendChild(grid);
+  } else if(currentPage==='keluar'){
+    document.getElementById('list-title').textContent=`Orderan Keluar (${keluarData.length})`;
+    let grid=document.createElement('div'); grid.className='orders';
+    grid.innerHTML=keluarData.length?keluarData.map(makeCard).join(''):`<div class="empty"><b>Belum ada yang keluar</b><p>Yang sudah diantar akan pindah kesini</p></div>`;
+    area.appendChild(grid);
+  } else {
+    document.getElementById('list-title').textContent=`Dashboard`;
+    let s1=document.createElement('div'); s1.innerHTML=`<div class="section-title">📥 Orderan Masuk <span>${masukData.length} antri • Lama di atas</span></div>`;
+    let g1=document.createElement('div'); g1.className='orders'; g1.innerHTML=masukData.length?masukData.map(makeCard).join(''):`<div class="empty">Masuk kosong</div>`;
+    let s2=document.createElement('div'); s2.innerHTML=`<div class="section-title">📦 Orderan Keluar <span>${keluarData.length} selesai • Gak numpuk</span></div>`;
+    let g2=document.createElement('div'); g2.className='orders'; g2.innerHTML=keluarData.length?keluarData.map(makeCard).join(''):`<div class="empty">Belum ada yang keluar</div>`;
+    area.appendChild(s1); area.appendChild(g1); area.appendChild(s2); area.appendChild(g2);
+  }
+}
+function updateLocal(id,status){
+  let k='pesanan_'+id; let d=safeParse(k); if(!d) return;
+  d.status=status; if(status==='selesai') d.sampaiAt=new Date().toISOString();
+  localStorage.setItem(k, JSON.stringify(d));localStorage.setItem('bakso_trigger', Date.now().toString());
+  try{ if(window.baksoBC) window.baksoBC.postMessage({type:'update'}); }catch(e){}
+  selectCard(id);
+  if(status==='diantar'){
+    let waNum=d.wa.startsWith('0')?'62'+d.wa.substring(1):d.wa;
+    if(confirm(`Kurir jalan untuk #${id}? Kirim WA?`)) window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(`Halo ${d.nama}, pesanan ${d.id} sedang diantar kurir 🛵`)}`,'_blank','noopener');
+    setTimeout(()=>setPage('keluar'),300);
+  } else {renderLocal();}
+}
+renderLocal();setInterval(renderLocal,1500);
+window.addEventListener('storage', (e)=>{ if(e.key && (e.key.startsWith('pesanan_') || e.key==='bakso_trigger' || e.key==='last_id')) renderLocal(); });
+try{window.baksoBC = new BroadcastChannel('bakso_channel');window.baksoBC.onmessage = ()=>{ renderLocal(); };}catch(e){}
+</script>
+</body>
+</html>
