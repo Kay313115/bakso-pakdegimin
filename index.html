@@ -68,6 +68,14 @@ body{background:var(--bg);display:flex;min-height:100vh;min-height:100dvh;color:
     <div class="menu-item active" id="menu-dashboard" onclick="setPage('dashboard'); toggleSidebar()">☰ Dashboard</div>
     <div class="menu-item" id="menu-masuk" onclick="setPage('masuk'); toggleSidebar()">📋 Orderan Masuk <span class="badge-new" id="badge-baru">0 Baru</span></div>
     <div class="menu-item" id="menu-keluar" onclick="setPage('keluar'); toggleSidebar()">📦 Orderan Keluar <span class="badge-keluar" id="badge-keluar">0 Selesai</span></div>
+    
+    <!-- SUARA DI NAVBAR BAWAH ORDERAN KELUAR -->
+    <div style="margin-top:22px; padding-top:16px; border-top:1px solid rgba(255,255,255,.12)">
+      <div class="menu-item" id="menu-suara" onclick="toggleSuara()" style="background:#16A34A; color:#fff; font-weight:700; justify-content:flex-start; gap:10px;">
+        <span id="icon-suara">🔊</span> <span id="text-suara">Suara: Ada orderan masuk - ON</span>
+      </div>
+      <small style="color:#94A3B8; font-size:10.5px; padding:8px 14px; display:block; line-height:1.3;">Suara ngomong otomatis kalau ada order baru</small>
+    </div>
   </div>
 </div>
 <div class="main">
@@ -136,7 +144,24 @@ function getJam(d){
 }
 window.selectCard = function(id){selectedId=id;document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));let el=document.getElementById('card-'+id); if(el) el.classList.add('selected');}
 
-// ===== SUARA NGOMONG "ADA ORDERAN MASUK" =====
+// ===== SUARA DI NAVBAR - TOGGLE =====
+window.toggleSuara = function(){
+  soundEnabled = !soundEnabled;
+  let el = document.getElementById('menu-suara');
+  let text = document.getElementById('text-suara');
+  let icon = document.getElementById('icon-suara');
+  if(soundEnabled){
+    el.style.background = '#16A34A';
+    text.textContent = 'Suara: Ada orderan masuk - ON';
+    icon.textContent = '🔊';
+    playVoiceOrder("Tes suara aktif");
+  } else {
+    el.style.background = '#475569';
+    text.textContent = 'Suara: OFF';
+    icon.textContent = '🔇';
+  }
+}
+
 function playVoiceOrder(nama="") {
   if(!soundEnabled) return;
   try {
@@ -259,7 +284,7 @@ window.clearAll = async function(){
   for(let d of snap.docs){ await deleteDoc(doc(db, "pesanan", d.id)); }
 }
 
-// REALTIME LISTENER + NOTIF SUARA NGOMONG
+// REALTIME LISTENER + SUARA NGOMONG
 onSnapshot(collection(db, "pesanan"), (snap)=>{
   let newData = snap.docs.map(doc=>({id:doc.id, ...doc.data()}));
   newData.sort((a,b)=> (a.waktu?.seconds||0) - (b.waktu?.seconds||0));
@@ -282,23 +307,9 @@ onSnapshot(collection(db, "pesanan"), (snap)=>{
   if(isFirstLoad) isFirstLoad = false;
 });
 
-// Tombol ON/OFF suara + aktifkan voice
 window.addEventListener('load', ()=>{
   if(window.speechSynthesis) window.speechSynthesis.getVoices();
   if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-  
-  let btn = document.createElement('button');
-  btn.style = `position:fixed;bottom:20px;right:20px;background:#16A34A;color:white;border:none;padding:12px 18px;border-radius:24px;z-index:999;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)`;
-  btn.textContent = '🔊 Suara: Ada orderan masuk - ON';
-  btn.onclick = ()=>{
-    soundEnabled = !soundEnabled;
-    btn.textContent = soundEnabled ? '🔊 Suara: Ada orderan masuk - ON' : '🔇 Suara OFF';
-    btn.style.background = soundEnabled ? '#16A34A' : '#94A3B8';
-    if(soundEnabled) playVoiceOrder("Tes suara");
-  };
-  document.body.appendChild(btn);
-  
-  // klik pertama untuk aktifkan suara di HP
   document.body.addEventListener('click', function initVoice(){
     if(window.speechSynthesis) window.speechSynthesis.getVoices();
     document.body.removeEventListener('click', initVoice);
