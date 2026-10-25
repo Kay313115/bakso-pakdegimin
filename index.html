@@ -68,13 +68,11 @@ body{background:var(--bg);display:flex;min-height:100vh;min-height:100dvh;color:
     <div class="menu-item active" id="menu-dashboard" onclick="setPage('dashboard'); toggleSidebar()">☰ Dashboard</div>
     <div class="menu-item" id="menu-masuk" onclick="setPage('masuk'); toggleSidebar()">📋 Orderan Masuk <span class="badge-new" id="badge-baru">0 Baru</span></div>
     <div class="menu-item" id="menu-keluar" onclick="setPage('keluar'); toggleSidebar()">📦 Orderan Keluar <span class="badge-keluar" id="badge-keluar">0 Selesai</span></div>
-    
-    <!-- SUARA DI NAVBAR BAWAH ORDERAN KELUAR -->
     <div style="margin-top:22px; padding-top:16px; border-top:1px solid rgba(255,255,255,.12)">
       <div class="menu-item" id="menu-suara" onclick="toggleSuara()" style="background:#16A34A; color:#fff; font-weight:700; justify-content:flex-start; gap:10px;">
-        <span id="icon-suara">🔊</span> <span id="text-suara">suara on</span>
+        <span id="icon-suara">🔊</span> <span id="text-suara">Suara: Ada orderan masuk - ON</span>
       </div>
-      <small style="color:#94A3B8; font-size:10.5px; padding:8px 14px; display:block; line-height:1.3;"></small>
+      <small style="color:#94A3B8; font-size:10.5px; padding:8px 14px; display:block; line-height:1.3;">Ngomong otomatis kalau ada order baru</small>
     </div>
   </div>
 </div>
@@ -82,7 +80,7 @@ body{background:var(--bg);display:flex;min-height:100vh;min-height:100dvh;color:
   <div class="top">
     <div class="top-left">
       <button class="hamburger" onclick="toggleSidebar()">☰</button>
-      <div><h1 id="page-title">Dashboard</h1><div class="secure-badge">✅ Firebase Realtime ON</div></div>
+      <div><h1 id="page-title">Dashboard</h1><div class="secure-badge">✅ Firebase Realtime ON - Suara di Navbar + QRIS</div></div>
     </div>
     <div class="search-wrap"><input class="search" id="searchInput" placeholder="Cari nama, WA, alamat..." onkeyup="filterSearch()" maxlength="50"></div>
   </div>
@@ -94,11 +92,9 @@ body{background:var(--bg);display:flex;min-height:100vh;min-height:100dvh;color:
   </div>
   <div id="content-area"></div>
 </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, serverTimestamp, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBvciljW20Y6Y6SlCPPd4gC7O6TyASLNCo",
   authDomain: "bakso-pakdegimin.firebaseapp.com",
@@ -109,14 +105,11 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const noWaWarung = "6281213660024";
 const tokenFonnte = "";
-
 let currentPage='dashboard', selectedId=null, allData=[];
 let isFirstLoad = true;
 let soundEnabled = true;
-
 window.toggleSidebar = function(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
 window.setPage = function(p){
   currentPage=p;
@@ -136,57 +129,32 @@ window.filterSearch = function(){
 function escapeHTML(s){return String(s||'').replace(/[&<>"'`=\/]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#x60;','=':'&#x3D;','/':'&#x2F;'}[c]))}
 function sanitizeText(t,max=50){t=String(t||'').trim().slice(0,max); if(/<script|onerror|onload|javascript:/i.test(t)) return '[blocked]'; return escapeHTML(t);}
 function sanitizeWA(w){w=String(w).replace(/[^0-9]/g,'').slice(0,15); return /^(08|628|62)/.test(w)?w:'';}
-function getJam(d){
-  try{
-    let date = d.waktu?.toDate ? d.waktu.toDate() : new Date(d.waktu);
-    return date.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
-  }catch{ return "--:--"; }
-}
+function getJam(d){ try{ let date = d.waktu?.toDate ? d.waktu.toDate() : new Date(d.waktu); return date.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}); }catch{ return "--:--"; } }
 window.selectCard = function(id){selectedId=id;document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));let el=document.getElementById('card-'+id); if(el) el.classList.add('selected');}
-
-// ===== SUARA DI NAVBAR - TOGGLE =====
 window.toggleSuara = function(){
   soundEnabled = !soundEnabled;
   let el = document.getElementById('menu-suara');
   let text = document.getElementById('text-suara');
   let icon = document.getElementById('icon-suara');
-  if(soundEnabled){
-    el.style.background = '#16A34A';
-    text.textContent = 'Suara: Ada orderan masuk - ON';
-    icon.textContent = '🔊';
-    playVoiceOrder("Tes suara aktif");
-  } else {
-    el.style.background = '#475569';
-    text.textContent = 'Suara: OFF';
-    icon.textContent = '🔇';
-  }
+  if(soundEnabled){ el.style.background = '#16A34A'; text.textContent = 'Suara: Ada orderan masuk - ON'; icon.textContent = '🔊'; playVoiceOrder("Tes suara aktif"); }
+  else { el.style.background = '#475569'; text.textContent = 'Suara: OFF'; icon.textContent = '🔇'; }
 }
-
 function playVoiceOrder(nama="") {
   if(!soundEnabled) return;
   try {
     window.speechSynthesis.cancel();
     let text = nama ? `Ada orderan masuk! Orderan baru dari ${nama}` : `Ada orderan masuk!`;
     let utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'id-ID';
-    utter.rate = 1;
-    utter.pitch = 1.1;
-    utter.volume = 1;
+    utter.lang = 'id-ID'; utter.rate = 1; utter.pitch = 1.1; utter.volume = 1;
     let voices = window.speechSynthesis.getVoices();
     let indoVoice = voices.find(v => v.lang.includes('id'));
     if(indoVoice) utter.voice = indoVoice;
     window.speechSynthesis.speak(utter);
     if(navigator.vibrate) navigator.vibrate([300,100,300]);
-    let originalTitle = document.title;
-    let c=0;
-    let blink=setInterval(()=>{
-      document.title = c%2===0 ? `🔥 ADA ORDERAN MASUK!` : originalTitle;
-      c++;
-      if(c>12){clearInterval(blink); document.title=originalTitle;}
-    },500);
+    let originalTitle = document.title; let c=0;
+    let blink=setInterval(()=>{ document.title = c%2===0 ? `🔥 ADA ORDERAN MASUK!` : originalTitle; c++; if(c>12){clearInterval(blink); document.title=originalTitle;} },500);
   } catch(e) {}
 }
-
 window.openManualOrder = async function(){
   let n=prompt('Nama (max 30):'); if(n===null) return;
   let w=prompt('WA 08xx:'); if(w===null) return;
@@ -194,16 +162,12 @@ window.openManualOrder = async function(){
   let nama=sanitizeText(n,30), wa=sanitizeWA(w), alamat=sanitizeText(a,80);
   if(!nama||wa==''||!alamat){alert('Data tidak valid');return;}
   try{
-    const docRef = await addDoc(collection(db, "pesanan"), {
-      nama, wa, alamat,
-      cart:[{name:'Bakso Biasa',qty:1}], total:25000,
-      status:'menunggu', waktu: serverTimestamp()
-    });
+    const docRef = await addDoc(collection(db, "pesanan"), { nama, wa, alamat, cart:[{name:'Bakso Biasa',qty:1}], total:25000, metode:'COD', status:'menunggu', waktu: serverTimestamp() });
     let pesanWarung = `🔥 PESANAN BARU #${docRef.id.slice(0,5)}\nNama: ${nama}\nWA: ${wa}\nAlamat: ${alamat}\nTotal: Rp25.000\nCek Dashboard!`;
     window.open(`https://wa.me/${noWaWarung}?text=${encodeURIComponent(pesanWarung)}`, '_blank');
   }catch(e){ alert("Gagal simpan: "+e.message); }
 }
-
+// MAKE CARD - SUDAH ADA BUKTI QRIS
 window.makeCard = function(d){
   let jam=getJam(d);
   let statusMap={menunggu:['tag-verif','Menunggu'], disiapkan:['tag-proses','Diproses'], diantar:['tag-antar','Kurir Jalan'], selesai:['tag-selesai','Sampai']};
@@ -212,9 +176,15 @@ window.makeCard = function(d){
   let isSiap = ['disiapkan','diantar','selesai'].includes(d.status);
   let isAntar = ['diantar','selesai'].includes(d.status);
   let isSampai = d.status==='selesai';
-  return `<div class="card ${selectedId==d.id?'selected':''}" id="card-${escapeHTML(d.id)}" onclick="selectCard('${escapeHTML(d.id)}')"><div class="card-top"><span class="card-time">⏰ ${escapeHTML(jam)}</span><span><b>#${escapeHTML(d.id.slice(0,5))}</b><span class="tag ${tagClass}">${escapeHTML(tagText)}</span></span></div><b class="user">👤 ${escapeHTML(d.nama)} • ${escapeHTML(d.wa)}</b><p class="menu">${escapeHTML((d.cart||[]).map(c=>c.name+' x'+c.qty).join(', '))}</p><small class="addr">📍 ${escapeHTML(d.alamat)} • COD - Rp${Number(d.total||0).toLocaleString('id-ID')}</small><div class="card-actions" onclick="event.stopPropagation()"><button class="${isVerif?'active-verif':''}" onclick="updateLocal('${escapeHTML(d.id)}','menunggu')">${isVerif?'✅ Diterima':'✓ Verifikasi'}</button><button class="${isSiap?'active-siap':''}" onclick="updateLocal('${escapeHTML(d.id)}','disiapkan')">${isSiap?'🔥 Dimasak':'Siapkan'}</button>${!isAntar?`<button class="primary" onclick="updateLocal('${escapeHTML(d.id)}','diantar')">🛵 Kurir</button>`:!isSampai?`<button class="primary active-antar" onclick="updateLocal('${escapeHTML(d.id)}','selesai')">📦 Sampai</button>`:`<button class="primary active-selesai">✅ Sampai</button>`}</div></div>`;
+  let metode = d.metode || d.metodeBayar || 'COD';
+  let buktiHtml = "";
+  if(metode==='QRIS' && d.buktiBayar){
+    buktiHtml = `<div style="margin-top:10px"><a href="${d.buktiBayar}" target="_blank"><img src="${d.buktiBayar}" style="width:100%; max-height:200px; border-radius:10px; border:2px solid #2563EB; object-fit:contain; background:#fff"></a><br><small style="color:#2563EB; font-weight:700;">📸 Bukti QRIS - Klik untuk zoom</small></div>`;
+  } else if(metode==='QRIS' && !d.buktiBayar){
+    buktiHtml = `<div style="margin-top:8px; background:#FEF2F2; padding:6px 10px; border-radius:8px; color:#991B1B; font-size:11px; font-weight:700;">⚠️ QRIS tapi belum ada bukti!</div>`;
+  }
+  return `<div class="card ${selectedId==d.id?'selected':''}" id="card-${escapeHTML(d.id)}" onclick="selectCard('${escapeHTML(d.id)}')"><div class="card-top"><span class="card-time">⏰ ${escapeHTML(jam)}</span><span><b>#${escapeHTML(d.id.slice(0,5))}</b><span class="tag ${tagClass}">${escapeHTML(tagText)}</span><span class="tag" style="background:${metode==='QRIS'?'#DBEAFE':'#DCFCE7'}; color:${metode==='QRIS'?'#1E40AF':'#166534'}">${escapeHTML(metode)}</span></span></div><b class="user">👤 ${escapeHTML(d.nama)} • ${escapeHTML(d.wa)}</b><p class="menu">${escapeHTML((d.cart||[]).map(c=>c.name+' x'+c.qty).join(', '))}</p><small class="addr">📍 ${escapeHTML(d.alamat)} • ${escapeHTML(metode)} - Rp${Number(d.total||0).toLocaleString('id-ID')}</small>${buktiHtml}<div class="card-actions" onclick="event.stopPropagation()"><button class="${isVerif?'active-verif':''}" onclick="updateLocal('${escapeHTML(d.id)}','menunggu')">${isVerif?'✅ Diterima':'✓ Verifikasi'}</button><button class="${isSiap?'active-siap':''}" onclick="updateLocal('${escapeHTML(d.id)}','disiapkan')">${isSiap?'🔥 Dimasak':'Siapkan'}</button>${!isAntar?`<button class="primary" onclick="updateLocal('${escapeHTML(d.id)}','diantar')">🛵 Kurir</button>`:!isSampai?`<button class="primary active-antar" onclick="updateLocal('${escapeHTML(d.id)}','selesai')">📦 Sampai</button>`:`<button class="primary active-selesai">✅ Sampai</button>`}</div></div>`;
 }
-
 window.renderLocal = function(){
   let data=[...allData];
   let masukData=data.filter(d=>d.status==='menunggu'||d.status==='disiapkan');
@@ -246,8 +216,6 @@ window.renderLocal = function(){
     area.appendChild(s1); area.appendChild(g1); area.appendChild(s2); area.appendChild(g2);
   }
 }
-
-// ===== VERIFIKASI & KURIR - ADA COD + SHARELOCK =====
 window.updateLocal = async function(id,status){
   try{
     await updateDoc(doc(db, "pesanan", id), { status: status });
@@ -277,18 +245,14 @@ window.updateLocal = async function(id,status){
     }
   }catch(e){ alert(e.message); }
 }
-
 window.clearAll = async function(){
   if(!confirm("Hapus SEMUA pesanan di Firebase?")) return;
   const snap = await getDocs(collection(db, "pesanan"));
   for(let d of snap.docs){ await deleteDoc(doc(db, "pesanan", d.id)); }
 }
-
-// REALTIME LISTENER + SUARA NGOMONG
 onSnapshot(collection(db, "pesanan"), (snap)=>{
   let newData = snap.docs.map(doc=>({id:doc.id, ...doc.data()}));
   newData.sort((a,b)=> (a.waktu?.seconds||0) - (b.waktu?.seconds||0));
-
   if(!isFirstLoad){
     let newOrders = snap.docChanges().filter(c => c.type === 'added');
     if(newOrders.length > 0){
@@ -301,12 +265,10 @@ onSnapshot(collection(db, "pesanan"), (snap)=>{
       setTimeout(()=>notifDiv.remove(),6000);
     }
   }
-
   allData = newData;
   renderLocal();
   if(isFirstLoad) isFirstLoad = false;
 });
-
 window.addEventListener('load', ()=>{
   if(window.speechSynthesis) window.speechSynthesis.getVoices();
   if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
