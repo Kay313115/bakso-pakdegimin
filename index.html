@@ -55,6 +55,7 @@ body{background:var(--bg);display:flex;min-height:100vh;min-height:100dvh;color:
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;backdrop-filter:blur(2px)}.overlay.show{display:block}
 .section-title{font-size:13px;font-weight:700;margin:18px 0 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .section-title span{font-size:10px;padding:3px 8px;border-radius:20px;background:#fff;border:1px solid var(--border)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 @media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.orders{grid-template-columns:1fr}.search{width:260px}}
 @media(max-width:768px){body{flex-direction:column}.hamburger{display:flex}.sidebar{position:fixed;left:0;top:0;bottom:0;height:100dvh;transform:translateX(-100%);max-width:85vw;width:85vw;min-width:0;padding-top:max(20px, env(safe-area-inset-top))}.sidebar.open{transform:translateX(0)}.main{padding:14px;padding-bottom:30px;width:100%;max-width:100%}.top{align-items:flex-start}.top h1{font-size:20px}.search-wrap{width:100%}.search{width:100%;font-size:16px}.stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:12px;border-radius:14px}.stat b{font-size:22px}.orders-head{flex-direction:column;align-items:stretch}.filter-group{width:100%;justify-content:space-between}.card{padding:14px;border-radius:14px}.card-actions{grid-template-columns:1fr;gap:6px}.card-actions button{min-height:44px;font-size:13px}}
 </style>
@@ -101,11 +102,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ===== SETTING WA - GANTI DISINI JAN =====
-const noWaWarung = "6281213660024"; // ganti nomor lu
-const tokenFonnte = ""; // isi token dari fonnte.com kalau mau WA pembeli otomatis
+const noWaWarung = "6281213660024";
+const tokenFonnte = "";
 
 let currentPage='dashboard', selectedId=null, allData=[];
+let isFirstLoad = true;
+let soundEnabled = true;
 
 window.toggleSidebar = function(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
 window.setPage = function(p){
@@ -134,6 +136,32 @@ function getJam(d){
 }
 window.selectCard = function(id){selectedId=id;document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));let el=document.getElementById('card-'+id); if(el) el.classList.add('selected');}
 
+// ===== SUARA NGOMONG "ADA ORDERAN MASUK" =====
+function playVoiceOrder(nama="") {
+  if(!soundEnabled) return;
+  try {
+    window.speechSynthesis.cancel();
+    let text = nama ? `Ada orderan masuk! Orderan baru dari ${nama}` : `Ada orderan masuk!`;
+    let utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'id-ID';
+    utter.rate = 1;
+    utter.pitch = 1.1;
+    utter.volume = 1;
+    let voices = window.speechSynthesis.getVoices();
+    let indoVoice = voices.find(v => v.lang.includes('id'));
+    if(indoVoice) utter.voice = indoVoice;
+    window.speechSynthesis.speak(utter);
+    if(navigator.vibrate) navigator.vibrate([300,100,300]);
+    let originalTitle = document.title;
+    let c=0;
+    let blink=setInterval(()=>{
+      document.title = c%2===0 ? `🔥 ADA ORDERAN MASUK!` : originalTitle;
+      c++;
+      if(c>12){clearInterval(blink); document.title=originalTitle;}
+    },500);
+  } catch(e) {}
+}
+
 window.openManualOrder = async function(){
   let n=prompt('Nama (max 30):'); if(n===null) return;
   let w=prompt('WA 08xx:'); if(w===null) return;
@@ -146,18 +174,8 @@ window.openManualOrder = async function(){
       cart:[{name:'Bakso Biasa',qty:1}], total:25000,
       status:'menunggu', waktu: serverTimestamp()
     });
-    // 1. NOTIF KE WA WARUNG
     let pesanWarung = `🔥 PESANAN BARU #${docRef.id.slice(0,5)}\nNama: ${nama}\nWA: ${wa}\nAlamat: ${alamat}\nTotal: Rp25.000\nCek Dashboard!`;
     window.open(`https://wa.me/${noWaWarung}?text=${encodeURIComponent(pesanWarung)}`, '_blank');
-
-    // 2. NOTIF OTOMATIS KE PEMBELI
-    if(tokenFonnte){
-      fetch('https://api.fonnte.com/send', {
-        method: 'POST',
-        headers: { 'Authorization': tokenFonnte },
-        body: new URLSearchParams({ target: wa, message: `Halo ${nama}! 🙏 Pesanan Bakso Pakde Gimin kamu #${docRef.id.slice(0,5)} sudah diterima. Lagi disiapin ya! 🍲` })
-      });
-    }
   }catch(e){ alert("Gagal simpan: "+e.message); }
 }
 
@@ -204,22 +222,32 @@ window.renderLocal = function(){
   }
 }
 
+// ===== VERIFIKASI & KURIR - ADA COD + SHARELOCK =====
 window.updateLocal = async function(id,status){
   try{
     await updateDoc(doc(db, "pesanan", id), { status: status });
     let d = allData.find(x=>x.id==id);
-    if(d && status==='diantar'){
-      let waNum=d.wa.startsWith('0')?'62'+d.wa.substring(1):d.wa;
-      if(confirm(`Kurir jalan untuk #${id.slice(0,5)}? Kirim WA ke pembeli?`)){
-        window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(`Halo ${d.nama}, pesanan ${d.id.slice(0,5)} sedang diantar kurir 🛵`)}`,'_blank','noopener');
-        // kirim otomatis juga pakai Fonnte
-        if(tokenFonnte){
-          fetch('https://api.fonnte.com/send', {
-            method: 'POST',
-            headers: { 'Authorization': tokenFonnte },
-            body: new URLSearchParams({ target: d.wa, message: `Halo ${d.nama}, pesanan ${id.slice(0,5)} sedang diantar kurir 🛵 Tunggu ya!` })
-          });
-        }
+    if(!d) return;
+    if(status !== 'menunggu' && status !== 'diantar') return;
+    let waNum = d.wa.startsWith('0') ? '62'+d.wa.substring(1) : d.wa;
+    let idPendek = d.id.slice(0,5);
+    let totalRp = Number(d.total||0).toLocaleString('id-ID');
+    let metode = d.metode || d.metodeBayar || 'COD';
+    let menuText = (d.cart||[]).map(c=>c.name+' x'+c.qty).join(', ');
+    let pesanWA = "";
+    if(status === 'menunggu'){
+      pesanWA = `Halo ${d.nama}, pesanan ${idPendek} sudah kami terima! 🙏\n\n📦 ${menuText}\n💰 Total: Rp${totalRp} (${metode})\n📍 Alamat tujuan: ${d.alamat}\n\nPesanan akan diantar ke alamat tujuan ya kak, mohon ditunggu 🍲\nTerima kasih sudah order di Bakso Pakde Gimin!`;
+    } else if(status === 'diantar'){
+      pesanWA = `Halo ${d.nama}, pesanan ${idPendek} sedang diantar kurir 🛵\n\n📦 ${menuText}\n💰 Total: Rp${totalRp} (${metode})\n📍 Alamat tujuan: ${d.alamat}\n\nPesanan akan diantar ke alamat tujuan.\n\n`;
+      if(metode.toUpperCase() === 'COD'){
+        pesanWA += `⚠️ COD - Tolong siapkan uang sejumlah Rp${totalRp} yang harus dibayar ya kak!\n\n`;
+      }
+      pesanWA += `📍 Tolong sharelock alamat anda ya kak, biar kurir gak nyasar 🙏\nKurir OTW sekarang!`;
+    }
+    if(confirm(`Kirim WA ${status === 'menunggu' ? 'VERIFIKASI' : 'KURIR'} untuk #${idPendek} - ${d.nama}?`)){
+      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(pesanWA)}`,'_blank','noopener');
+      if(tokenFonnte){
+        fetch('https://api.fonnte.com/send', { method: 'POST', headers: { 'Authorization': tokenFonnte }, body: new URLSearchParams({ target: d.wa, message: pesanWA }) });
       }
     }
   }catch(e){ alert(e.message); }
@@ -231,15 +259,50 @@ window.clearAll = async function(){
   for(let d of snap.docs){ await deleteDoc(doc(db, "pesanan", d.id)); }
 }
 
-// REALTIME LISTENER
+// REALTIME LISTENER + NOTIF SUARA NGOMONG
 onSnapshot(collection(db, "pesanan"), (snap)=>{
-  allData = snap.docs.map(doc=>({id:doc.id, ...doc.data()}));
-  allData.sort((a,b)=>{
-    let ta = a.waktu?.seconds || 0;
-    let tb = b.waktu?.seconds || 0;
-    return ta - tb;
-  });
+  let newData = snap.docs.map(doc=>({id:doc.id, ...doc.data()}));
+  newData.sort((a,b)=> (a.waktu?.seconds||0) - (b.waktu?.seconds||0));
+
+  if(!isFirstLoad){
+    let newOrders = snap.docChanges().filter(c => c.type === 'added');
+    if(newOrders.length > 0){
+      let namaBaru = newOrders[0].doc.data().nama;
+      playVoiceOrder(namaBaru);
+      let notifDiv = document.createElement('div');
+      notifDiv.style = `position:fixed;top:20px;right:20px;background:#EF4444;color:white;padding:16px 20px;border-radius:12px;z-index:9999;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.3);animation:slideIn .3s ease`;
+      notifDiv.innerHTML = `🔊 ADA ORDERAN MASUK!<br><small>${namaBaru} - cek dashboard!</small>`;
+      document.body.appendChild(notifDiv);
+      setTimeout(()=>notifDiv.remove(),6000);
+    }
+  }
+
+  allData = newData;
   renderLocal();
+  if(isFirstLoad) isFirstLoad = false;
+});
+
+// Tombol ON/OFF suara + aktifkan voice
+window.addEventListener('load', ()=>{
+  if(window.speechSynthesis) window.speechSynthesis.getVoices();
+  if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  
+  let btn = document.createElement('button');
+  btn.style = `position:fixed;bottom:20px;right:20px;background:#16A34A;color:white;border:none;padding:12px 18px;border-radius:24px;z-index:999;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)`;
+  btn.textContent = '🔊 Suara: Ada orderan masuk - ON';
+  btn.onclick = ()=>{
+    soundEnabled = !soundEnabled;
+    btn.textContent = soundEnabled ? '🔊 Suara: Ada orderan masuk - ON' : '🔇 Suara OFF';
+    btn.style.background = soundEnabled ? '#16A34A' : '#94A3B8';
+    if(soundEnabled) playVoiceOrder("Tes suara");
+  };
+  document.body.appendChild(btn);
+  
+  // klik pertama untuk aktifkan suara di HP
+  document.body.addEventListener('click', function initVoice(){
+    if(window.speechSynthesis) window.speechSynthesis.getVoices();
+    document.body.removeEventListener('click', initVoice);
+  }, {once:true});
 });
 </script>
 </body>
